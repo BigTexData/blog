@@ -1,0 +1,244 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Analog and Digital: Are we in sync about the sinc?</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-03-26"><meta name="DC.source" content="analog_vs_digital_sinc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Analog and Digital: Are we in sync about the sinc?</h1><!--introduction--><p>Rect &amp; Sinc: Analog and digital</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#11">formula</a></li><li><a href="#14">Sinc aliasing</a></li></ul></div><p>The <img src="analog_vs_digital_sinc_eq03715298556990818855.png" alt="$\tt{rect}$"> function is a very useful tool when analyzing signals around us. It represents a signal that has a value of one for a given duration centered around time zero, and is zero everywhere else.</p><img vspace="5" hspace="5" src="analog_vs_digital_sinc_01.png" alt=""> <p>We need a frequency domain understanding of the <img src="analog_vs_digital_sinc_eq03715298556990818855.png" alt="$\tt{rect}$"> function in order to fully understand it's behavior. In our early classes on signals and systems, we were taught that the fourier transform of the <img src="analog_vs_digital_sinc_eq03715298556990818855.png" alt="$\tt{rect}$"> function is the <img src="analog_vs_digital_sinc_eq15245033355431499013.png" alt="$\tt{sinc}$"> function.</p><p><img src="analog_vs_digital_sinc_eq01877811628936522951.png" alt="$$sinc(\omega \tau/2) = \tau \frac{\sin{(\omega \tau/2)}}{\omega \tau/2}$$"></p><p>In practice when using digital computers, we are limited to <img src="analog_vs_digital_sinc_eq16733798126878734760.png" alt="$\textit{discrete-time}$"> representation of the <img src="analog_vs_digital_sinc_eq03715298556990818855.png" alt="$\tt{rect}$"> function. How then do we analyze this discrete-time signal in the frequency domain?</p><p>The DTFT or the discrete-time <img src="analog_vs_digital_sinc_eq03715298556990818855.png" alt="$\tt{rect}$"> function provides a frequency domain understanding of this signal, and mathematically, it can be shown to be as follows:</p><p><img src="analog_vs_digital_sinc_eq09644893391520737132.png" alt="$$X_{DTFT}(f) = \frac{\sin(\pi f M)}{\sin(\pi f)}.$$"></p><p>This looks close enough to what <img src="analog_vs_digital_sinc_eq10347578120818331992.png" alt="$\tt{MATLAB}$"> defines as <img src="analog_vs_digital_sinc_eq15245033355431499013.png" alt="$\tt{sinc}$"> function which is given by:</p><p><img src="analog_vs_digital_sinc_eq10685148473495725852.png" alt="$$sinc(x) = \frac{\sin{\pi x}}{\pi x}$$"></p><p>Close, but not exactly the same! There is a pesky <img src="analog_vs_digital_sinc_eq07016639600657581288.png" alt="$\sin$"> function in the denominator of the DTFT. Wouldn't it be nice if we could simply use the <img src="analog_vs_digital_sinc_eq10347578120818331992.png" alt="$\tt{MATLAB}$"> <img src="analog_vs_digital_sinc_eq15245033355431499013.png" alt="$\tt{sinc}$"> function and call it a day?</p><p>So, what are we giving up in making approximating the DTFT of the discrete-time <img src="analog_vs_digital_sinc_eq03715298556990818855.png" alt="$\tt{rect}$"> by the <img src="analog_vs_digital_sinc_eq15245033355431499013.png" alt="$\tt{sinc}$">?</p><p>The <img src="analog_vs_digital_sinc_eq17304228838087151690.png" alt="$\textit{fast Fourier transform}$"> or the FFT which is an efficient of the <img src="analog_vs_digital_sinc_eq16679343403625466284.png" alt="$\textit{discrete Fouriet transform}$"> can be used for this purpose.</p><h2>formula<a name="11"></a></h2><img vspace="5" hspace="5" src="analog_vs_digital_sinc_02.png" alt=""> <p>The accuracy lost in this approximation is a result of aliasing caused by sampling the continuous <img src="analog_vs_digital_sinc_eq03715298556990818855.png" alt="$\tt{rect}$"> function. The figure below compares the FFT of the discrete-time rect with formulas for the DTFT and pure <img src="analog_vs_digital_sinc_eq15245033355431499013.png" alt="$\tt{sinc}$"> functions.</p><img vspace="5" hspace="5" src="analog_vs_digital_sinc_03.png" alt=""> <p>At normalized frequency of 0.5, the approximation error could be about 36%.</p><h2>Sinc aliasing<a name="14"></a></h2><pre class="codeoutput">
+sincalias =
+
+   -1.0078
+
+Sinc Formula = -0.63662  DTFT = -1.0078
+
+approx_error =
+
+   36.3380
+
+Approximation error = 36.338%
+</pre><p>A way to visualize aliasing that is occurring is by drawing frequency-shifted but overlapping <img src="analog_vs_digital_sinc_eq15245033355431499013.png" alt="$\tt{sinc}$"> functions. The response at a particular frequency is the sum of these sinc's.</p><img vspace="5" hspace="5" src="analog_vs_digital_sinc_04.png" alt=""> <p>So, analog or digital, the <img src="analog_vs_digital_sinc_eq15245033355431499013.png" alt="$\tt{sinc}$"> function is incredibly useful. Just keep in mind that the aliasing in the discrete-time world causes it to be somewhat of an approximation. Aliasing, which results in a number frequency-shifted overlapping sinc functions, creates a <img src="analog_vs_digital_sinc_eq07432641213420439860.png" alt="$\sin(\pi x)$"> term in the denominator of the discrete-time Fourier transform, in place of the <img src="analog_vs_digital_sinc_eq14301873925056805904.png" alt="$\pi x$"> in the <img src="analog_vs_digital_sinc_eq15245033355431499013.png" alt="$\tt{sinc}$"> function.</p><p>Analog or digital, left-handed or right-handed, we can all continue to embrace the <img src="analog_vs_digital_sinc_eq15245033355431499013.png" alt="$\tt{sinc}$"> function to better understand the world around us.</p><p>Kumbaya!</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Analog and Digital: Are we in sync about the sinc?
+% Rect & Sinc: Analog and digital
+%
+
+%%
+% The $\tt{rect}$ function is a very useful tool when analyzing signals 
+% around us. It represents a signal that has a value of one for a given
+% duration centered around time zero, and is zero everywhere else. 
+N = 2^7;
+M = 2^4-1;
+
+ts = [0:1/N:1-1/N] - 1/2;
+rect_vals = zeros(N,1);
+rect_vals(N/2-(M-1)/2:N/2+(M+1)/2) = 1;
+plot(ts, rect_vals, 'LineWidth', 2)
+axis([-0.5, 0.5, -0.1, 1.1])
+
+%% 
+% We need a frequency domain understanding of the $\tt{rect}$ function 
+% in order to fully understand it's behavior. In our early classes on signals 
+% and systems, we were taught that the fourier transform of the $\tt{rect}$ 
+% function is the $\tt{sinc}$ function. 
+% 
+% $$sinc(\omega \tau/2) = \tau \frac{\sin{(\omega \tau/2)}}{\omega \tau/2}$$
+% 
+
+%% 
+% In practice when using digital computers, we are limited to 
+% $\textit{discrete-time}$ representation of the $\tt{rect}$ function. 
+% How then do we analyze this discrete-time signal in the frequency domain?
+
+%%
+% The DTFT or the discrete-time $\tt{rect}$ function provides a frequency 
+% domain understanding of this signal, and mathematically, it can be shown 
+% to be as follows:
+%
+% 
+% $$X_{DTFT}(f) = \frac{\sin(\pi f M)}{\sin(\pi f)}.$$
+% 
+
+%% 
+% This looks close enough to what $\tt{MATLAB}$ defines as $\tt{sinc}$
+% function which is given by:
+%%
+% 
+% $$sinc(x) = \frac{\sin{\pi x}}{\pi x}$$
+% 
+%%
+% Close, but not exactly the same! There is a pesky $\sin$ function in the
+% denominator of the DTFT. Wouldn't it be nice if we could simply use the
+% $\tt{MATLAB}$ $\tt{sinc}$ function and call it a day?
+
+%%
+% So, what are we giving up in making approximating the DTFT of the
+% discrete-time $\tt{rect}$ by the $\tt{sinc}$?
+
+%% 
+%%
+% The $\textit{fast Fourier transform}$ or the FFT which is an efficient of the
+% $\textit{discrete Fouriet transform}$ can be used for this purpose. 
+
+% The DFT assumes that the signal is periodic. We use half pulses at
+% beginning and end of the sequence to model a pulse that is symmetric
+% around the zeroth sample. 
+
+t = 0:1/N:(1-1/N);
+
+x = zeros(N,1);
+x(1:floor(M/2)+1) = 1; x((N-floor(M/2)+1):end) = 1;
+
+%% formula
+f = 0:1e-4:0.5;
+% pi*f*M = 2*pi*(f/fs)*M/2  = w * tau/2
+XDTFT_form = sin(pi*f*M)./sin(pi*f);
+
+% f goes from [0, fs/2]
+% sin(pi*f*M)/(pi*f) = (M * 1/fs)* sin(2*pi*(f/fs)*M/2)/(2*pi*(f/fs)*(M/2))
+sinc_f = M*sinc(f*M);
+
+figure;
+plot(t, x, 'o-');
+
+XDFT = fft(x);
+
+%%
+% The accuracy lost in this approximation is a result of aliasing caused by
+% sampling the continuous $\tt{rect}$ function. The figure below compares
+% the FFT of the discrete-time rect with formulas for the DTFT and pure
+% $\tt{sinc}$ functions.
+
+
+figure;
+subplot(2, 1,1)
+plot(1/N*[1:N/2], abs((XDFT(1:N/2))), '*-');
+hold on
+plot(f, abs(XDTFT_form), 'r')
+plot(f, abs(sinc_f), 'm')
+legend('FFT computed', 'DFT formula', 'Sinc formula')
+
+subplot(2, 1,2);
+plot(1/N*[1:N/2], abs((XDFT(1:N/2))), '*-');
+hold on
+plot(f, abs(XDTFT_form), 'r')
+plot(f, abs(sinc_f), 'm')
+axis([0.45, 0.5, -inf, 2])
+grid on;
+legend('FFT computed', 'DFT formula', 'Sinc formula')
+
+% figure;
+% plot(1/N*[1:N/2], unwrap(angle((XDFT(1:N/2)))));
+
+% figure;
+% subplot(2,1,1);
+% plot(1/N*[1:N/2], real(XDFT(1:N/2)), '*-')
+% subplot(2,1,2);
+% plot(1/N*[1:N/2], imag(XDFT(1:N/2)),'*-');
+% axis([0, 0.5, -pi, pi])
+
+%%
+% At normalized frequency of 0.5, the approximation
+% error could be about 36%.
+
+%% Sinc aliasing
+falias = [-40.5:1:40.5];
+sincout = M*sinc(-falias*M);
+sincalias = sum(sincout)
+disp(['Sinc Formula = ', num2str(sinc_f(end)), '  DTFT = ', num2str(sincalias)])
+approx_error = ((XDTFT_form(end)-sinc_f(end))/XDTFT_form(end))*100
+disp(['Approximation error = ', num2str(approx_error), '%'])
+
+%% 
+% A way to visualize aliasing that is occurring is by drawing
+% frequency-shifted but overlapping $\tt{sinc}$ functions. The 
+% response at a particular frequency is the sum of these sinc's.
+figure; hold on;
+f = -100:1e-3:100;
+sinc_at_fcenter = M*sinc((f)*M);
+fcenter = [-40:40];
+for ii=1:length(fcenter)
+    plot((f+fcenter(ii)), sinc_at_fcenter, 'LineWidth', 1.5)
+    axis([-1, 1, -5, M+3])
+end
+
+%% 
+% So, analog or digital, the $\tt{sinc}$ function is incredibly useful.
+% Just keep in mind that the aliasing in the discrete-time world causes it
+% to be somewhat of an approximation. Aliasing, which results in a number 
+% frequency-shifted overlapping sinc functions, creates a $\sin(\pi x)$
+% term in the denominator of the discrete-time Fourier transform, in place
+% of the $\pi x$ in the $\tt{sinc}$ function.
+
+%%
+% Analog or digital, left-handed or right-handed, we can all continue to
+% embrace the $\tt{sinc}$ function to better understand the world around
+% us. 
+
+%%
+% Kumbaya!
+    
+
+##### SOURCE END #####
+--></body></html>
